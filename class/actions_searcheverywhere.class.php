@@ -36,7 +36,7 @@ class ActionsSearcheverywhere extends \searcheverywhere\RetroCompatCommonHookAct
 	{
 		global $langs,$db,$conf;
 
-		if (in_array('searchform', explode(':', $parameters['context']))) {
+		if (in_array('searchform', explode(':', $parameters['context'])) && getDolGlobalString('SEARCHEVERYWHERE_SEARCH_PREVIEW')) {
 			$langs->load('searcheverywhere@searcheverywhere');
 
 			$res = '';
