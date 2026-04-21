@@ -22,6 +22,7 @@
 
 	dol_include_once('/product/class/product.class.php');
 	dol_include_once('/societe/class/societe.class.php');
+	dol_include_once('/contact/class/contact.class.php');
 	dol_include_once('/comm/propal/class/propal.class.php');
 	dol_include_once('/projet/class/project.class.php');
 	dol_include_once('/projet/class/task.class.php');
