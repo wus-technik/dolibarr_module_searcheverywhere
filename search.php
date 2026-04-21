@@ -24,13 +24,11 @@
 	if (empty($keyword)) $keyword=GETPOST('sall');
 	if (empty($keyword)) $keyword=GETPOST('search_all');
 
-	llxHeader('', $langs->trans('Searcheverywhere'), '', '', 0, 0, array('/searcheverywhere/js/jquery.qtip.min.js'));
+	llxHeader('', $langs->trans('Searcheverywhere'), '', '', 0, 0);
 	$head = searcheverywhere_prepare_head($keyword);
 	dol_fiche_head($head, 'search', $langs->trans('Searcheverywhere'), 0, 'searcheverywhere@searcheverywhere');
 ?>
 
-	<link rel="stylesheet" type="text/css" href="js/jquery.qtip.min.css">
-	<script type="text/javascript" src="js/jquery.qtip.min.js"></script>
 	<style type="text/css">
 		#results {
 			position:relative;
@@ -106,29 +104,56 @@
 						$div = $('<div class="result" />');
 						$div.append(data);
 						$('#results').append($div);
-						console.log($('#results div.result'))
 
-
-						jQuery("#results div.result .classfortooltip").each(function() {
-							$(this).qtip({
-								content: {
-									text: false // Use each elements title attribute
-								},
-								position: {
-									my: 'bottom center',
-									at: 'top center',
-									target: $(this) // Use the triggering element as the target
-								},
-								style: {
-									classes: 'qtip-bootstrap' // Use the Bootstrap theme
-								},
-								events: {
-									show: function(event, api) {
-										// Use the event object to position the tooltip if necessary
-									}
-								}
-							});
+						// Re-init standard tooltips on dynamically loaded elements
+						$div.find(".classfortooltip").tooltip({
+							tooltipClass: "mytooltip",
+							show: { collision: "flipfit", effect: "toggle", delay: 50, duration: 20 },
+							hide: { delay: 250, duration: 20 },
+							content: function() { return $(this).prop("title"); }
 						});
+
+						// Re-init AJAX tooltips on dynamically loaded elements (mirrors lib_foot.js.php)
+						var ajaxTargets = $div.find(".classforajaxtooltip");
+						if (ajaxTargets.length) {
+							var dialogElem = jQuery("#dialogforpopup");
+							var csrfToken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+
+							ajaxTargets.tooltip({
+								tooltipClass: "mytooltip",
+								show: { collision: "flipfit", effect: "toggle", delay: 0, duration: 20 },
+								hide: { delay: 250, duration: 20 }
+							});
+
+							ajaxTargets.on("mouseover", function(event) {
+								event.stopImmediatePropagation();
+								clearTimeout(dialogElem.data("openTimeoutId"));
+								var params = JSON.parse($(this).attr("data-params"));
+								params.token = csrfToken;
+								var elemfortooltip = $(this);
+								dialogElem.data("openTimeoutId", setTimeout(function() {
+									ajaxTargets.tooltip("close");
+									$.ajax({
+										url: "<?php echo DOL_URL_ROOT; ?>/core/ajax/ajaxtooltip.php",
+										type: "post",
+										async: true,
+										data: params,
+										success: function(response) {
+											if (elemfortooltip.is(":hover")) {
+												elemfortooltip.tooltip("option", "content", response);
+												elemfortooltip.tooltip("open");
+											}
+										}
+									});
+								}, 100));
+							});
+
+							ajaxTargets.on("mouseout", function(event) {
+								event.stopImmediatePropagation();
+								clearTimeout(dialogElem.data("openTimeoutId"));
+								ajaxTargets.tooltip("close");
+							});
+						}
 					})
 				}
 			});
