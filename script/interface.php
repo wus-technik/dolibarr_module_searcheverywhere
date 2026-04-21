@@ -20,6 +20,8 @@
 
 	require '../config.php';
 
+	$user->loadRights();
+
 	dol_include_once('/product/class/product.class.php');
 	dol_include_once('/societe/class/societe.class.php');
 	dol_include_once('/contact/class/contact.class.php');
