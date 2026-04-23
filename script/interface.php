@@ -20,8 +20,17 @@
 
 	require '../config.php';
 
+	$user->loadRights();
+
+	// This endpoint is read-only after bootstrapping user context, so release the
+	// PHP session lock and let tooltip AJAX calls run in parallel with searches.
+	if (function_exists('session_write_close')) {
+		session_write_close();
+	}
+
 	dol_include_once('/product/class/product.class.php');
 	dol_include_once('/societe/class/societe.class.php');
+	dol_include_once('/contact/class/contact.class.php');
 	dol_include_once('/comm/propal/class/propal.class.php');
 	dol_include_once('/projet/class/project.class.php');
 	dol_include_once('/projet/class/task.class.php');
