@@ -6,10 +6,15 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 Searcheverywhere=Recherche Globale
 ActionComm=Agenda
 Propal=Proposition
+Commande=Commande
+Facture=Facture
+Expedition=Expedition
+SupplierOrder=Commande fournisseur
 SupplierInvoice = Facture Fournisseur
 Task=Tâche
 Societe=Client/Prospect/Fournisseur
 Product=Produit
+Contact=Contact
 SearchInfo=(Recherche strict du terme par défaut, ajoutez % pour une recherche générique - ex : 09%77%19%50%69 si vous ignorez la forme du numéro de téléphone)
 SearcheverywhereAbout=A propos
 searcheverywhereSetup=Configuration
