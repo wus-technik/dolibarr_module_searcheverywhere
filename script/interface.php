@@ -28,10 +28,11 @@
 		session_write_close();
 	}
 
-	dol_include_once('/product/class/product.class.php');
-	dol_include_once('/societe/class/societe.class.php');
-	dol_include_once('/contact/class/contact.class.php');
-	dol_include_once('/comm/propal/class/propal.class.php');
+		dol_include_once('/product/class/product.class.php');
+		dol_include_once('/societe/class/societe.class.php');
+		dol_include_once('/contact/class/contact.class.php');
+		dol_include_once('/user/class/user.class.php');
+		dol_include_once('/comm/propal/class/propal.class.php');
 	dol_include_once('/projet/class/project.class.php');
 	dol_include_once('/projet/class/task.class.php');
 	dol_include_once('/comm/action/class/actioncomm.class.php');
@@ -57,10 +58,11 @@ switch ($get) {
 
 		break;
 
-	case 'search-all':
+		case 'search-all':
 
-			$TObjectType=array('product','company','contact');
-		if (isModEnabled('projet')) {
+				$TObjectType=array('product','company','contact');
+			if (!empty($user->rights->user->user->lire)) $TObjectType[] = 'user';
+			if (isModEnabled('projet')) {
 			$TObjectType[] = 'projet';
 			$TObjectType[] = 'task';
 		}
@@ -88,11 +90,15 @@ switch ($get) {
 		break;
 }
 
-function _search($type, $keyword, $asArray = false)
-{
-	global $db, $conf, $langs, $user;
+	function _search($type, $keyword, $asArray = false)
+	{
+		global $db, $conf, $langs, $user;
 
-	$table = MAIN_DB_PREFIX.$type;
+		if ($type == 'user' && empty($user->rights->user->user->lire)) {
+			return array();
+		}
+
+		$table = MAIN_DB_PREFIX.$type;
 	$objname = ucfirst($type);
 	$id_field = 'rowid';
 	$complete_label = true;
@@ -104,11 +110,15 @@ function _search($type, $keyword, $asArray = false)
 
 	$TResult=array();
 
-	if ($type == 'company') {
-		$table = MAIN_DB_PREFIX.'societe';
-		$objname = 'Societe';
-		$complete_label = false;
-	} elseif ($type == 'projet') {
+		if ($type == 'company') {
+			$table = MAIN_DB_PREFIX.'societe';
+			$objname = 'Societe';
+			$complete_label = false;
+		} elseif ($type == 'user') {
+			$table = MAIN_DB_PREFIX.'user';
+			$objname = 'User';
+			$complete_label = false;
+		} elseif ($type == 'projet') {
 		$id_field = MAIN_DB_PREFIX.'projet.rowid';
 		$table = array(MAIN_DB_PREFIX.'projet', MAIN_DB_PREFIX.'societe');
 		$sql_join.=' LEFT JOIN '.MAIN_DB_PREFIX.'societe ON ('.MAIN_DB_PREFIX.'societe.rowid = '.MAIN_DB_PREFIX.'projet.fk_soc)';
@@ -265,8 +275,9 @@ function _search($type, $keyword, $asArray = false)
 			}
 		}
 	}
-	$sql = 'SELECT DISTINCT '.$id_field.' as rowid FROM '.$table[0].' '.$sql_join.' WHERE ('.$sql_where.') ';
-	if (getDolGlobalString('SEARCHEVERYWHERE_SEARCH_ONLY_IN_ENTITY')) $sql.= 'AND '.$table[0].'.entity = '.$conf->entity.' ';
+		$sql = 'SELECT DISTINCT '.$id_field.' as rowid FROM '.$table[0].' '.$sql_join.' WHERE ('.$sql_where.') ';
+		if ($type == 'user' && empty($user->admin)) $sql.= 'AND '.$table[0].'.statut = '.User::STATUS_ENABLED.' ';
+		if (getDolGlobalString('SEARCHEVERYWHERE_SEARCH_ONLY_IN_ENTITY')) $sql.= 'AND '.$table[0].'.entity = '.$conf->entity.' ';
 
 	if ($user->socid > 0) {
 		$sql.= ' AND llx_societe.rowid='.$user->socid;

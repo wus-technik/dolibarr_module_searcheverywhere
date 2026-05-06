@@ -64,11 +64,12 @@
 	<div style="clear:both"></div>
 	<script type="text/javascript">
 		var url = "<?php echo dol_buildpath('/searcheverywhere/search.php?keyword=', 1) ?>";
-		var TSearch = [
-			'product',
-			'company',
-			'contact',
-			<?php if (isModEnabled('propal')) echo "'propal',"; ?>
+			var TSearch = [
+				'product',
+				'company',
+				'contact',
+				<?php if (!empty($user->rights->user->user->lire)) echo "'user',"; ?>
+				<?php if (isModEnabled('propal')) echo "'propal',"; ?>
 			<?php if (isModEnabled('commande')) echo "'order',"; ?>
 			<?php if (isModEnabled('facture')) echo "'invoice',"; ?>
 			<?php if (isModEnabled('projet')) echo "'projet','task',"; ?>

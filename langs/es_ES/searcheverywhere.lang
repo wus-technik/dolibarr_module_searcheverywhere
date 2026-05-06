@@ -13,6 +13,7 @@ SupplierOrder=Pedido a proveedor
 SupplierInvoice = Factura del proveedor
 Task=Tarea
 Societe=Cliente/Potencial/Proveedor
+User=Usuario
 Product=Producto
 Contact=Contacto
 SearchInfo=(Búsqueda estricta por defecto, añade % para una búsqueda genérica - ejemplo : 34%96%19%50%69 si quieres ignorar ciertos campos del número de teléfono)

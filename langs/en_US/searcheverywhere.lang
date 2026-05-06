@@ -13,6 +13,7 @@ SupplierOrder=Supplier Order
 SupplierInvoice = Supplier Invoice
 Task=Task
 Societe=Thirdparties
+User=User
 Product=Product
 Contact=Contact
 SearchInfo=(Strict search by default, add % for a generics search by ex : 09%77%19%50%69 if you want to ignore the phone number display format)

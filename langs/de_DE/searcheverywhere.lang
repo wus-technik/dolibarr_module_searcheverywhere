@@ -13,6 +13,7 @@ SupplierOrder = Lieferantenbestellung
 SupplierInvoice = Rechnung Lieferant
 Task = Aufgabe
 Societe = Geschäftspartner
+User = Benutzer
 Product = Produkt
 Contact = Kontakt
 SearchInfo = (Standardmäßig strenge Suche, fügen Sie % für eine generische Suche nach ex : 09%77%19%50%69 hinzu, wenn Sie das Anzeigeformat der Telefonnummer ignorieren möchten)
