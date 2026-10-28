@@ -278,6 +278,9 @@ switch ($get) {
 		$sql = 'SELECT DISTINCT '.$id_field.' as rowid FROM '.$table[0].' '.$sql_join.' WHERE ('.$sql_where.') ';
 		if ($type == 'user' && empty($user->admin)) $sql.= 'AND '.$table[0].'.statut = '.User::STATUS_ENABLED.' ';
 		if (getDolGlobalString('SEARCHEVERYWHERE_SEARCH_ONLY_IN_ENTITY')) $sql.= 'AND '.$table[0].'.entity = '.$conf->entity.' ';
+		// Expedition::fetch() lädt nur Lieferungen aus getEntity('expedition'); Treffer aus anderen
+		// Mandanten scheiterten dort ("no expedition found", Sentry DOLIBARR-4F) und belegten Plätze im LIMIT
+		if ($type == 'expedition') $sql.= 'AND '.$table[0].'.entity IN ('.getEntity('expedition').') ';
 
 	if ($user->socid > 0) {
 		$sql.= ' AND llx_societe.rowid='.$user->socid;
@@ -335,7 +338,7 @@ switch ($get) {
 
 			preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $label, $match);
 
-			$url = is_array($match['href']) ? $match['href'][0] : $match['href'];
+			$url = is_array($match['href']) ? ($match['href'][0] ?? '') : $match['href']; // Label ohne Link (DOLIBARR-4J6)
 
 			if ($asArray) {
 				$TResult[] = array(
